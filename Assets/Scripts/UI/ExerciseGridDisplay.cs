@@ -5,6 +5,7 @@ using DG.Tweening;
 public class ExerciseGridDisplay : MonoBehaviour 
 {
 	public UILabel nameLabel;
+	public GameObject exerciseDetailViewPrefab;
 
 	private int _index;
 	private ExerciseData _exerciseData;
@@ -18,6 +19,8 @@ public class ExerciseGridDisplay : MonoBehaviour
 	}
 	private DisplayState _displayState = DisplayState.Hidden;
 
+	private GameObject _detailView;
+
 	void Start () 
 	{
 	
@@ -26,6 +29,7 @@ public class ExerciseGridDisplay : MonoBehaviour
 	public void Initialize(int index, ExerciseData exerciseData, float introAnimDelay)
 	{
 		_index = index;
+		_exerciseData = exerciseData;
 
 		if(nameLabel != null) 
 		{
@@ -53,6 +57,23 @@ public class ExerciseGridDisplay : MonoBehaviour
 
 	public void OnClick()
 	{
-		Debug.Log ("Clicked on exercise: " + _index + ": " + gameObject.name);
+		if (_detailView != null) 
+		{
+			return;
+		}
+
+		if (_displayState != DisplayState.Revealed) 
+		{
+			return;
+		}
+
+		Debug.Assert (exerciseDetailViewPrefab != null, "Missing detail view prefab");
+
+		_detailView = ScreenSpawner.Instance.SpawnScreen(exerciseDetailViewPrefab);
+		ExerciseDetailView detailView = _detailView.GetComponent<ExerciseDetailView>();
+		if(detailView != null) 
+		{
+			detailView.Initialize(_exerciseData, gameObject.transform.position);
+		}
 	}
 }
